@@ -7,16 +7,20 @@
 {% block body %}
 <form method='POST'>
 	<p>User Portal</p><br>
-	<p>{{user}}</p>	
+	<label>Create New Project</label>
 	<div class="form-group">
-		<label>Display Account Info</label>
+		<label>Project Name</label>
+		<input type="text" name="project name">
 	</div>
 	<div class="form-group">
-		<label>Create New Project</label>
-		<input type="text" name="Project Name">
-		<input type="text" name="Project Description">
-		<input type="text" name="Resources Needed">
+		<label>Project Description</label>
+		<input type="text" name="description">
+	</div>
+	<div class="form-group">
+		<label>Resources Needed (Enter 1 - 100)</label>
+		<input type="text" name="availability">
 	</div>
 	<button type='submit' class='btn btn-primary'>Login</button>
+	<p>{{content}}</p>	
 </form>
 {% endblock %}
