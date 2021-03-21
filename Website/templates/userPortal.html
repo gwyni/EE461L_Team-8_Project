@@ -7,6 +7,7 @@
 {% block body %}
 <form method='POST'>
 	<p>User Portal</p><br>
+	<p>{{content}}</p>	
 	<label>Create New Project</label>
 	<div class="form-group">
 		<label>Project Name</label>
@@ -20,7 +21,7 @@
 		<label>Resources Needed (Enter 1 - 100)</label>
 		<input type="text" name="availability">
 	</div>
-	<button type='submit' class='btn btn-primary'>Login</button>
-	<p>{{content}}</p>	
+	<button type='submit' class='btn btn-primary'>Submit New Project</button>
+	<button type='submit' class='btn btn-primary'>Logout and Return to Home Sreen</button>
 </form>
 {% endblock %}

@@ -17,6 +17,8 @@ app.config["MONGO_URI3"] = 'mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lc
 mongo3 = PyMongo(app)
 hwDb = mongo.db.hardwareSets
 
+app.secret_key = b'5tei3of8g5rg3i/'
+
 # prints out the contents of a database
 def printDatabase(database):
 	# you have to have the curly braces
@@ -39,12 +41,22 @@ def passwordAlreadyExists(database,password):
 	else:
 		return True
 
+# returns true if an inputted password matches the username, returns False otherwise
+def passwordMatches(database,username,password):
+	userFound = database.find_one({"username":username})
+	print(userFound["password"])
+	if(userFound["password"] == password):
+		return True
+	return False
+
+
 # just have a / means that's the home page
 @app.route('/',methods=['GET','POST'])
 def login():
 	invalidName = False
 	invalidPassword = False
 	# if we have submitted a form
+	message = ""
 	if(request.method=='POST'):
 		# loginInfo is a dictionary that contains as keys the names of the input fields in the form group and the actual user input as values
 		loginInfo = request.form
@@ -57,38 +69,56 @@ def login():
 			invalidPassword = True
 		# username is empty
 		if(invalidName and not invalidPassword):
-			return render_template('userLoginPage.html',content='Empty Username!')
+			message = 'Empty Username!'
+			#return render_template('userLoginPage.html',content='Empty Username!')
 		# password is empty
 		elif(not invalidName and invalidPassword):
-			return render_template('userLoginPage.html',content='Empty Password!')
+			message  = 'Empty Password!'
+			#return render_template('userLoginPage.html',content='Empty Password!')
 		# both invalid
 		elif(invalidName and invalidPassword):
-			return render_template('userLoginPage.html',content='Empty Username and Password!')
+			message = 'Empty Username and Password!'
+			#return render_template('userLoginPage.html',content='Empty Username and Password!')
 		# both have possibly valid entries
 		else:
-			# if a username has already been used and password hasn't
-			if userNameAlreadyExists(userDb,username) and not passwordAlreadyExists(userDb,password):
-				return render_template('userLoginPage.html',content='A user already has that username!')
-			elif not userNameAlreadyExists(userDb,username) and passwordAlreadyExists(userDb,password):
-				return render_template('userLoginPage.html',content='A user already has that password!')
-			# if a username and password are both already in the database
-			elif userNameAlreadyExists(userDb,username) and passwordAlreadyExists(userDb,password):
-				return render_template('userLoginPage.html',content='That username and password have already been used!')
-			# if the inputted username and password have not already been used, add them to the database
-			elif not userNameAlreadyExists(userDb,username) and not passwordAlreadyExists(userDb,password):
+			# if a username has already been used, check to see if the correct password has been entered
+			if userNameAlreadyExists(userDb,username):
+			 	if passwordMatches(userDb,username,password):
+			 		session['username'] = username
+			 		return redirect(url_for('userPortal'))
+			 	else:
+			 		message = 'Incorrect username and password!'
+
+				#return render_template('userLoginPage.html',content='A user already has that username!')
+			# elif not userNameAlreadyExists(userDb,username) and passwordAlreadyExists(userDb,password):
+			# 	message = 'A user already has that password!'
+			# 	#return render_template('userLoginPage.html',content='A user already has that password!')
+			# # if a username and password are both already in the database
+			# elif userNameAlreadyExists(userDb,username) and passwordAlreadyExists(userDb,password):
+			# 	message = 'That username and password have already been used!'
+				#return render_template('userLoginPage.html',content='That username and password have already been used!')
+
+			# if the the inputted username has not already been used, add username and password to the database
+			elif not userNameAlreadyExists(userDb,username):
 				userDb.insert_one({"username":loginInfo.get('username'), "password":loginInfo.get('password')})
-				return render_template('userPortal.html')
-				return redirect('userPortal.html')
-		return redirect(request.url)
-	return render_template('userLoginPage.html')
+				session['username'] = username
+				#print(session['username'])
+				#return render_template('userPortal.html')
+				return redirect(url_for('userPortal'))
+		#return redirect(request.url)
+	return render_template('userLoginPage.html',content=message)
 
 # below displays the HTML for the user portal page
 @app.route('/userPortal',methods=['GET','POST'])
-def project():
+def userPortal():
+	displayUser = ""
+	if 'username' in session:
+			displayUser = session['username']
 	if(request.method=='POST'):
 		projectInfo = request.form
 		projectName = projectInfo.get('Project Name')
-		return render_template('userPortal.html')
+		#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
+	return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
 
 # main method that just runs the app	
 if __name__ == "__main__":
