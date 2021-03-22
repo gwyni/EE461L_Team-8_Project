@@ -120,6 +120,17 @@ def userPortal():
 		#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
 	return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
 
+@app.route('/checkOut/')
+def checkOut():
+	#print("Printing Database")
+	#printDatabase(hwDb)
+	hwSetOne=hwDb.find_one({"ID":"HWSet_1"})
+	capOne=hwSetOne["Capacity"]
+	availOne=hwSetOne["Availability"]
+	hwSetTwo=hwDb.find_one({"ID":"HWSet_2"})
+	capTwo=hwSetTwo["Capacity"]
+	availTwo=hwSetOne["Availability"]
+	return render_template('checkOutPage.html', available=capOne, initialCap=availOne, available2=capTwo, initialCap2=availTwo)
 # main method that just runs the app	
 if __name__ == "__main__":
 	# create the hardware sets amd add them to their database
