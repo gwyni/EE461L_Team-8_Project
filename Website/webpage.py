@@ -3,19 +3,19 @@ from flask_pymongo import PyMongo
 app = Flask(__name__)
 
 # this is the url and variables for the user databse, wehen accessing the database use the "userDb" variable
-app.config["MONGO_URI"] = 'mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/myDb?retryWrites=true&w=majority'
-mongo = PyMongo(app)
+#app.config["MONGO_URI"] = 'mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/myDb?retryWrites=true&w=majority'
+mongo = PyMongo(app,uri='mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/myDb?retryWrites=true&w=majority')
 userDb = mongo.db.users
 
 # this is the url and variables for the project databse, wehen accessing the database use the "projectDb" variable
-app.config["MONGO_URI2"] = 'mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/storedProjects?retryWrites=true&w=majority'
-mongo2 = PyMongo(app)
-projectDb = mongo.db.projects
+#app.config["MONGO_URI2"] = 'mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/storedProjects?retryWrites=true&w=majority'
+mongo2 = PyMongo(app,uri='mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/storedProjects?retryWrites=true&w=majority')
+projectDb = mongo2.db.projects
 
 # this is the url and variables for the project databse, wehen accessing the database use the "projectDb" variable
-app.config["MONGO_URI3"] = 'mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/hardware?retryWrites=true&w=majority'
-mongo3 = PyMongo(app)
-hwDb = mongo.db.hardwareSets
+#app.config["MONGO_URI3"] = 'mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/hardware?retryWrites=true&w=majority'
+mongo3 = PyMongo(app,uri='mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/hardware?retryWrites=true&w=majority')
+hwDb = mongo3.db.hardwareSets
 
 app.secret_key = b'5tei3of8g5rg3i/'
 
@@ -120,7 +120,7 @@ def userPortal():
 		#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
 	return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
 
-@app.route('/checkOut/')
+@app.route('/checkOut', methods=['GET','POST'])
 def checkOut():
 	#print("Printing Database")
 	#printDatabase(hwDb)
