@@ -138,23 +138,30 @@ def userPortal():
 		if "requestedHW1" in projectInfo.keys():
 			requestedOne=int(projectInfo["requestedHW1"])
 			result=validCheckoutInput(requestedOne, availOne)
-			msgOne=error_messages[result]		
+			msgOne=error_messages[result]	
+			if result==4:
+				old={"ID":"HWSet_1"}
+				new1={"$set": {"Availability" : availOne-requestedOne}}
+				availOne=availOne-requestedOne
+				hwDb.update(old,new1)
 		elif "requestedHW2" in projectInfo.keys():
 			requestedTwo=int(projectInfo["requestedHW2"])
 			result=validCheckoutInput(requestedTwo,availTwo)
 			msgTwo=error_messages[result]
-			
-		
-			
-		#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
+			if result==4:
+				old={"ID":"HWSet_2"}
+				new2={"$set": {"Availability" : availTwo-requestedTwo}}
+				availTwo=availTwo-requestedTwo
+				hwDb.update(old,new2)
+			#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
 	return render_template('userPortal.html',content='Hello, ' + displayUser + '!', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
 
 @app.route('/checkOut/', methods=['GET','POST'])
 def checkOut():
 	msgOne= ""
 	msgTwo=""
-	#print("Printing Database")
-	#printDatabase(hwDb)
+	print("Printing Database")
+	printDatabase(hwDb)
 	hwSetOne=hwDb.find_one({"ID":"HWSet_1"})
 	capOne=hwSetOne["Capacity"]
 	availOne=hwSetOne["Availability"]
