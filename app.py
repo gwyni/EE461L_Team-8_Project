@@ -128,7 +128,7 @@ def userPortal():
 	availOne=hwSetOne["Availability"]
 	hwSetTwo=hwDb.find_one({"ID":"HWSet_2"})
 	capTwo=hwSetTwo["Capacity"]
-	availTwo=hwSetOne["Availability"]
+	availTwo=hwSetTwo["Availability"]
 	displayUser = ""
 	if 'username' in session:
 			displayUser = session['username']
@@ -141,18 +141,18 @@ def userPortal():
 			msgOne=error_messages[result]	
 			if result==4:
 				old={"ID":"HWSet_1"}
-				new1={"$set": {"Availability" : availOne-requestedOne}}
+				updated={"$set": {"Availability" : availOne-requestedOne}}
 				availOne=availOne-requestedOne
-				hwDb.update(old,new1)
+				hwDb.update_one(old,updated)
 		elif "requestedHW2" in projectInfo.keys():
 			requestedTwo=int(projectInfo["requestedHW2"])
 			result=validCheckoutInput(requestedTwo,availTwo)
 			msgTwo=error_messages[result]
 			if result==4:
 				old={"ID":"HWSet_2"}
-				new2={"$set": {"Availability" : availTwo-requestedTwo}}
+				updated={"$set": {"Availability" : availTwo-requestedTwo}}
 				availTwo=availTwo-requestedTwo
-				hwDb.update(old,new2)
+				hwDb.update_one(old,updated)
 			#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
 	return render_template('userPortal.html',content='Hello, ' + displayUser + '!', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
 
