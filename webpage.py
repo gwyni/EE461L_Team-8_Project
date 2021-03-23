@@ -1,7 +1,9 @@
 from flask import Flask, render_template,url_for, request, redirect, session
 from flask_pymongo import PyMongo
+import numbers
 app = Flask(__name__)
 
+error_messages= {1:'Input is not a number', 2:'Request must be greater than 0', 3: 'Request is greater than availability', 4: 'Successfully checked out resources'}
 # this is the url and variables for the user databse, wehen accessing the database use the "userDb" variable
 #app.config["MONGO_URI"] = 'mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/myDb?retryWrites=true&w=majority'
 mongo = PyMongo(app,uri='mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/myDb?retryWrites=true&w=majority')
@@ -108,20 +110,49 @@ def login():
 		#return redirect(request.url)
 	return render_template('userLoginPage.html',content=message)
 
+def validCheckoutInput(requested, available):
+	if not isinstance(requested,numbers.Number):
+		return 1		# Error 1: request must be an integer
+	elif(requested<=0):
+		return 2		# Error 2: request must be greater than 0
+	elif(requested>available):
+		return 3 		# Error 3: requested too many resources
+	return 4			# no error
 # below displays the HTML for the user portal page
 @app.route('/userPortal',methods=['GET','POST'])
 def userPortal():
+	msgOne= ""
+	msgTwo=""
+	hwSetOne=hwDb.find_one({"ID":"HWSet_1"})
+	capOne=hwSetOne["Capacity"]
+	availOne=hwSetOne["Availability"]
+	hwSetTwo=hwDb.find_one({"ID":"HWSet_2"})
+	capTwo=hwSetTwo["Capacity"]
+	availTwo=hwSetOne["Availability"]
 	displayUser = ""
 	if 'username' in session:
 			displayUser = session['username']
 	if(request.method=='POST'):
 		projectInfo = request.form
 		projectName = projectInfo.get('Project Name')
+		if "requestedHW1" in projectInfo.keys():
+			requestedOne=int(projectInfo["requestedHW1"])
+			result=validCheckoutInput(requestedOne, availOne)
+			msgOne=error_messages[result]		
+		elif "requestedHW2" in projectInfo.keys():
+			requestedTwo=int(projectInfo["requestedHW2"])
+			result=validCheckoutInput(requestedTwo,availTwo)
+			msgTwo=error_messages[result]
+			
+		
+			
 		#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
-	return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
+	return render_template('userPortal.html',content='Hello, ' + displayUser + '!', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
 
-@app.route('/checkOut', methods=['GET','POST'])
+@app.route('/checkOut/', methods=['GET','POST'])
 def checkOut():
+	msgOne= ""
+	msgTwo=""
 	#print("Printing Database")
 	#printDatabase(hwDb)
 	hwSetOne=hwDb.find_one({"ID":"HWSet_1"})
@@ -130,7 +161,19 @@ def checkOut():
 	hwSetTwo=hwDb.find_one({"ID":"HWSet_2"})
 	capTwo=hwSetTwo["Capacity"]
 	availTwo=hwSetOne["Availability"]
-	return render_template('checkOutPage.html', available=capOne, initialCap=availOne, available2=capTwo, initialCap2=availTwo)
+	if(request.method=='POST'):
+		checkOutInfo=request.form
+		if "requestedHW1" in checkOutInfo.keys():
+			requestedOne=int(checkOutInfo["requestedHW1"])
+			result=validCheckoutInput(requestedOne, availOne)
+			msgOne=error_messages[result]
+		elif "requestedHW2" in checkOutInfo.keys():
+			requestedTwo=int(checkOutInfo["requestedHW2"])
+			result=validCheckoutInput(requestedTwo,availTwo)
+			msgTwo=error_messages[result]
+		
+		#print(checkOutInfo)
+	return render_template('checkOutPage.html', available=capOne, initialCap=availOne, available2=capTwo, initialCap2=availTwo, statusOne=msgOne, statusTwo=msgTwo)
 # main method that just runs the app	
 if __name__ == "__main__":
 	# create the hardware sets amd add them to their database
