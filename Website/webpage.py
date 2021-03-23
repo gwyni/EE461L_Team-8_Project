@@ -111,6 +111,12 @@ def login():
 # below displays the HTML for the user portal page
 @app.route('/userPortal',methods=['GET','POST'])
 def userPortal():
+	hwSetOne=hwDb.find_one({"ID":"HWSet_1"})
+	capOne=hwSetOne["Capacity"]
+	availOne=hwSetOne["Availability"]
+	hwSetTwo=hwDb.find_one({"ID":"HWSet_2"})
+	capTwo=hwSetTwo["Capacity"]
+	availTwo=hwSetOne["Availability"]
 	displayUser = ""
 	if 'username' in session:
 			displayUser = session['username']
@@ -118,9 +124,9 @@ def userPortal():
 		projectInfo = request.form
 		projectName = projectInfo.get('Project Name')
 		#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
-	return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
+	return render_template('userPortal.html',content='Hello, ' + displayUser + '!', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo)
 
-@app.route('/checkOut', methods=['GET','POST'])
+@app.route('/checkOut/', methods=['GET','POST'])
 def checkOut():
 	#print("Printing Database")
 	#printDatabase(hwDb)
@@ -130,7 +136,7 @@ def checkOut():
 	hwSetTwo=hwDb.find_one({"ID":"HWSet_2"})
 	capTwo=hwSetTwo["Capacity"]
 	availTwo=hwSetOne["Availability"]
-	return render_template('checkOutPage.html', available=capOne, initialCap=availOne, available2=capTwo, initialCap2=availTwo)
+	return render_template('checkOutPage.html', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo)
 # main method that just runs the app	
 if __name__ == "__main__":
 	# create the hardware sets amd add them to their database
