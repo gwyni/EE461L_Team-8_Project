@@ -90,13 +90,15 @@ def login():
 			#return render_template('userLoginPage.html',content='Empty Username and Password!')
 		# both have possibly valid entries
 		else:
-			# if a username has already been used, check to see if the correct password has been entered
-			if userNameAlreadyExists(userDb,username):
-			 	if passwordMatches(userDb,username,password):
-			 		session['username'] = username
-			 		return redirect(url_for('userPortal'))
-			 	else:
-			 		message = 'Incorrect username and password!'
+			# if the login button has been pressed
+			if request.form.get('login'):
+				# if a username has already been used, check to see if the correct password has been entered
+				if userNameAlreadyExists(userDb,username):
+				 	if passwordMatches(userDb,username,password):
+				 		session['username'] = username
+				 		return redirect(url_for('userPortal'))
+				 	else:
+				 		message = 'Incorrect username and password!'
 
 				#return render_template('userLoginPage.html',content='A user already has that username!')
 			# elif not userNameAlreadyExists(userDb,username) and passwordAlreadyExists(userDb,password):
@@ -107,13 +109,17 @@ def login():
 			# 	message = 'That username and password have already been used!'
 				#return render_template('userLoginPage.html',content='That username and password have already been used!')
 
-			# if the the inputted username has not already been used, add username and password to the database
-			elif not userNameAlreadyExists(userDb,username):
-				userDb.insert_one({"username":loginInfo.get('username'), "password":loginInfo.get('password')})
-				session['username'] = username
-				#print(session['username'])
-				#return render_template('userPortal.html')
-				return redirect(url_for('userPortal'))
+			# if the Sign Up button has been pressed
+			if request.form.get('signUp'):
+				# if the the inputted username has not already been used, add username and password to the database
+				if not userNameAlreadyExists(userDb,username):
+					userDb.insert_one({"username":loginInfo.get('username'), "password":loginInfo.get('password')})
+					session['username'] = username
+					#print(session['username'])
+					#return render_template('userPortal.html')
+					return redirect(url_for('userPortal'))
+				else:
+					message = 'That user name has already been used!'
 		#return redirect(request.url)
 	return render_template('userLoginPage.html',content=message)
 
@@ -143,12 +149,26 @@ def userPortal():
 	if(request.method=='POST'):
 		projectInfo = request.form
 		projectName = projectInfo.get('project name')
-		# if project name has not been used already, add it to database
-		if request.form.get('new_project') and not projectNameAlreadyExists(projectDb,projectName):
-			projectDb.insert_one({"Project Name":projectName,"Description":request.form.get('description'),"HW Set 1 Resources":request.form.get('requestedHW1'),"HW Set 2 Resources":request.form.get('requestedHW2'),"Users in Project":[displayUser]})
-		# print error message if the project name has already been used
-		elif request.form.get('new_project') and projectNameAlreadyExists(projectDb,projectName):
-			projectMsg = "That name has already been used! Please enter a new name."
+
+		# if the submit button has been pressed
+		if request.form.get('new_project'):
+			# if a project name has been entered
+			if projectName != '':
+				# if project name has not been used already, add it to database
+				if not projectNameAlreadyExists(projectDb,projectName):
+					projectDb.insert_one({"Project Name":projectName,"Description":request.form.get('description'),"HW Set 1 Resources":request.form.get('requestedHW1'),"HW Set 2 Resources":request.form.get('requestedHW2'),"Users in Project":[displayUser]})
+				# print error message if the project name has already been used
+				elif projectNameAlreadyExists(projectDb,projectName):
+					projectMsg = "That name has already been used! Please enter a new name."
+			else:
+				projectMsg = "You must enter a project name."
+
+		# if the logout button has been pressed
+		if request.form.get('logout'):
+			# unsave the username and return to main screen
+			session.pop('username')
+			return redirect(url_for('login'))
+
 		if "requestedHW1" in projectInfo.keys():
 			requestedOne=int(projectInfo["requestedHW1"])
 			result=validCheckoutInput(requestedOne, availOne)
