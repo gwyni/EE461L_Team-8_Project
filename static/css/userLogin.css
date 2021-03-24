@@ -11,7 +11,7 @@ anyone wanting to work on the css, this is how the files work (this took me fore
 /* body formatting */
 body{
 	font-family: 'Roboto Mono', monospace;
-	background:#3498db;
+	background:#124A9C;
 	margin: 0 auto 0 auto;  
 	width:100%; 
 	text-align:center;
@@ -57,7 +57,7 @@ label {
 	max-width: 300px;
 	margin: auto;
 	border: 5px double black;
-	background-color: #f2f2f2;
+	background-color: #EDDFA3;
 	padding: 10px 20px 5px 20px;
 	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }

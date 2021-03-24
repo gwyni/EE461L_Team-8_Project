@@ -1,7 +1,7 @@
 <!--
-	this is the base html file
-	the {% block head %} type syntax means that the head for all pages that extend base.html will have that same head.
-	example: <title>project name - {% block title %}{% endblock %}</title> means that every page will have the title of:
+	this is the base html file (replace / with { in the comments because the html file will read them even if they're commented out lol)
+	the /% block head %/ type syntax means that the head for all pages that extend base.html will have that same head.
+	example: <title>project name - /% block title %//% endblock %/</title> means that every page will have the title of:
 		"project name - [the title you set in the html of that file]"
 -->
 
@@ -13,9 +13,9 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-	{% block head %}{% endblock %}
+	{% block head %} {% endblock %}
 </head>
 <body>
-	{% block body %}{% endblock %}
+	{% block body %} {% endblock %}
 </body>
 </html>
