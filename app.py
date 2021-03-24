@@ -51,6 +51,13 @@ def passwordMatches(database,username,password):
 		return True
 	return False
 
+# returns true if a project name already exists
+def projectNameAlreadyExists(database,name):
+	if database.find_one({"Project Name":name}) == None:
+		return False
+	else:
+		return True
+
 
 # just have a / means that's the home page
 @app.route('/',methods=['GET','POST'])
@@ -123,6 +130,7 @@ def validCheckoutInput(requested, available):
 def userPortal():
 	msgOne= ""
 	msgTwo=""
+	projectMsg = ""
 	hwSetOne=hwDb.find_one({"ID":"HWSet_1"})
 	capOne=hwSetOne["Capacity"]
 	availOne=hwSetOne["Availability"]
@@ -134,7 +142,13 @@ def userPortal():
 			displayUser = session['username']
 	if(request.method=='POST'):
 		projectInfo = request.form
-		projectName = projectInfo.get('Project Name')
+		projectName = projectInfo.get('project name')
+		# if project name has not been used already, add it to database
+		if request.form.get('new_project') and not projectNameAlreadyExists(projectDb,projectName):
+			projectDb.insert_one({"Project Name":projectName,"Description":request.form.get('description'),"HW Set 1 Resources":request.form.get('requestedHW1'),"HW Set 2 Resources":request.form.get('requestedHW2'),"Users in Project":[displayUser]})
+		# print error message if the project name has already been used
+		elif request.form.get('new_project') and projectNameAlreadyExists(projectDb,projectName):
+			projectMsg = "That name has already been used! Please enter a new name."
 		if "requestedHW1" in projectInfo.keys():
 			requestedOne=int(projectInfo["requestedHW1"])
 			result=validCheckoutInput(requestedOne, availOne)
@@ -154,7 +168,7 @@ def userPortal():
 				availTwo=availTwo-requestedTwo
 				hwDb.update_one(old,updated)
 			#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
-	return render_template('userPortal.html',content='Hello, ' + displayUser + '!', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
+	return render_template('userPortal.html',content='Hello, ' + displayUser + '!', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo,projectCheck=projectMsg)
 
 @app.route('/checkOut/', methods=['GET','POST'])
 def checkOut():
