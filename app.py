@@ -4,6 +4,7 @@ import numbers
 app = Flask(__name__)
 
 error_messages= {1:'Input is not a number', 2:'Request must be greater than 0', 3: 'Request is greater than availability', 4: 'Successfully checked out resources'}
+
 # this is the url and variables for the user databse, wehen accessing the database use the "userDb" variable
 #app.config["MONGO_URI"] = 'mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/myDb?retryWrites=true&w=majority'
 mongo = PyMongo(app,uri='mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/myDb?retryWrites=true&w=majority')
@@ -132,10 +133,12 @@ def validCheckoutInput(requested, available):
 		return 3 		# Error 3: requested too many resources
 	return 4			# no error
 # below displays the HTML for the user portal page
+
 @app.route('/userPortal',methods=['GET','POST'])
 def userPortal():
 	projectMsg = ""
 	displayUser = ""
+	
 	if 'username' in session:
 			displayUser = session['username']
 	if(request.method=='POST'):
@@ -148,7 +151,7 @@ def userPortal():
 			if projectName != '':
 				# if project name has not been used already, add it to database
 				if not projectNameAlreadyExists(projectDb,projectName):
-					projectDb.insert_one({"Project Name":projectName,"Description":request.form.get('description'),"HW Set 1 Resources":request.form.get('requestedHW1'),"HW Set 2 Resources":request.form.get('requestedHW2'),"Users in Project":[displayUser]})
+					projectDb.insert_one({"Project Name":projectName,"Description":request.form.get('description'),"HW Set 1 Resources":0,"HW Set 2 Resources":0,"Users in Project":[displayUser]})
 				# print error message if the project name has already been used
 				elif projectNameAlreadyExists(projectDb,projectName):
 					projectMsg = "That name has already been used! Please enter a new name."
@@ -161,15 +164,16 @@ def userPortal():
 			session.pop('username')
 			return redirect(url_for('login'))
 		if request.form.get('addresources'):
-			return redirect(url_for('checkOut'))
+			return redirect(url_for('checkOut',project="kelly")) # need to change this to pass in project name
 		
 			#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
 	return render_template('userPortal.html',content='Hello, ' + displayUser + '!',projectCheck=projectMsg)
 
-@app.route('/checkOut/', methods=['GET','POST'])
-def checkOut():
+@app.route('/checkOut/<project> ', methods=['GET','POST'])
+def checkOut(project):
 	msgOne= ""
 	msgTwo=""
+	projectInfo=projectDb.find_one({"Project Name": project})
 	hwSetOne=hwDb.find_one({"ID":"HWSet_1"})
 	capOne=hwSetOne["Capacity"]
 	availOne=hwSetOne["Availability"]
@@ -187,6 +191,10 @@ def checkOut():
 				updated={"$set": {"Availability" : availOne-requestedOne}}
 				availOne=availOne-requestedOne
 				hwDb.update_one(old,updated)
+				project_hw1=projectInfo["HW Set 1 Resources"]
+				pName={"Project Name": project}
+				updatedResource={"$set": {"HW Set 1 Resources" : project_hw1 +requestedOne}}
+				projectDb.update_one(pName, updatedResource)
 		elif request.form.get("submitHW2"):
 			requestedTwo=int(resourcesInfo["requestedHW2"])
 			result=validCheckoutInput(requestedTwo,availTwo)
@@ -196,6 +204,10 @@ def checkOut():
 				updated={"$set": {"Availability" : availTwo-requestedTwo}}
 				availTwo=availTwo-requestedTwo
 				hwDb.update_one(old,updated)
+				project_hw2=projectInfo["HW Set 2 Resources"]
+				pName={"Project Name": project}
+				updatedResource={"$set": {"HW Set 2 Resources" : project_hw2 +requestedTwo}}
+				projectDb.update_one(pName, updatedResource)
 		elif request.form.get('returnToUP'):
 			print("reached")
 			return redirect(url_for('userPortal'))
