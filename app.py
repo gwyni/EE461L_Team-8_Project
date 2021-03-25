@@ -134,21 +134,13 @@ def validCheckoutInput(requested, available):
 # below displays the HTML for the user portal page
 @app.route('/userPortal',methods=['GET','POST'])
 def userPortal():
-	msgOne= ""
-	msgTwo=""
 	projectMsg = ""
-	hwSetOne=hwDb.find_one({"ID":"HWSet_1"})
-	capOne=hwSetOne["Capacity"]
-	availOne=hwSetOne["Availability"]
-	hwSetTwo=hwDb.find_one({"ID":"HWSet_2"})
-	capTwo=hwSetTwo["Capacity"]
-	availTwo=hwSetTwo["Availability"]
 	displayUser = ""
 	if 'username' in session:
 			displayUser = session['username']
 	if(request.method=='POST'):
-		projectInfo = request.form
-		projectName = projectInfo.get('project name')
+		resourcesInfo = request.form
+		projectName = resourcesInfo.get('project name')
 
 		# if the submit button has been pressed
 		if request.form.get('new_project'):
@@ -168,9 +160,26 @@ def userPortal():
 			# unsave the username and return to main screen
 			session.pop('username')
 			return redirect(url_for('login'))
+		if request.form.get('addresources'):
+			return redirect(url_for('checkOut'))
+		
+			#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
+	return render_template('userPortal.html',content='Hello, ' + displayUser + '!',projectCheck=projectMsg)
 
-		if "requestedHW1" in projectInfo.keys():
-			requestedOne=int(projectInfo["requestedHW1"])
+@app.route('/checkOut/', methods=['GET','POST'])
+def checkOut():
+	msgOne= ""
+	msgTwo=""
+	hwSetOne=hwDb.find_one({"ID":"HWSet_1"})
+	capOne=hwSetOne["Capacity"]
+	availOne=hwSetOne["Availability"]
+	hwSetTwo=hwDb.find_one({"ID":"HWSet_2"})
+	capTwo=hwSetTwo["Capacity"]
+	availTwo=hwSetTwo["Availability"]
+	if(request.method=='POST'):
+		resourcesInfo = request.form
+		if request.form.get("submitHW1"):
+			requestedOne=int(resourcesInfo["requestedHW1"])
 			result=validCheckoutInput(requestedOne, availOne)
 			msgOne=error_messages[result]	
 			if result==4:
@@ -178,8 +187,8 @@ def userPortal():
 				updated={"$set": {"Availability" : availOne-requestedOne}}
 				availOne=availOne-requestedOne
 				hwDb.update_one(old,updated)
-		elif "requestedHW2" in projectInfo.keys():
-			requestedTwo=int(projectInfo["requestedHW2"])
+		elif request.form.get("submitHW2"):
+			requestedTwo=int(resourcesInfo["requestedHW2"])
 			result=validCheckoutInput(requestedTwo,availTwo)
 			msgTwo=error_messages[result]
 			if result==4:
@@ -187,34 +196,12 @@ def userPortal():
 				updated={"$set": {"Availability" : availTwo-requestedTwo}}
 				availTwo=availTwo-requestedTwo
 				hwDb.update_one(old,updated)
-			#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
-	return render_template('userPortal.html',content='Hello, ' + displayUser + '!', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo,projectCheck=projectMsg)
-
-@app.route('/checkOut/', methods=['GET','POST'])
-def checkOut():
-	msgOne= ""
-	msgTwo=""
-	print("Printing Database")
-	printDatabase(hwDb)
-	hwSetOne=hwDb.find_one({"ID":"HWSet_1"})
-	capOne=hwSetOne["Capacity"]
-	availOne=hwSetOne["Availability"]
-	hwSetTwo=hwDb.find_one({"ID":"HWSet_2"})
-	capTwo=hwSetTwo["Capacity"]
-	availTwo=hwSetOne["Availability"]
-	if(request.method=='POST'):
-		checkOutInfo=request.form
-		if "requestedHW1" in checkOutInfo.keys():
-			requestedOne=int(checkOutInfo["requestedHW1"])
-			result=validCheckoutInput(requestedOne, availOne)
-			msgOne=error_messages[result]
-		elif "requestedHW2" in checkOutInfo.keys():
-			requestedTwo=int(checkOutInfo["requestedHW2"])
-			result=validCheckoutInput(requestedTwo,availTwo)
-			msgTwo=error_messages[result]
-		
+		elif request.form.get('returnToUP'):
+			print("reached")
+			return redirect(url_for('userPortal'))
 		#print(checkOutInfo)
-	return render_template('checkOutPage.html', available=capOne, initialCap=availOne, available2=capTwo, initialCap2=availTwo, statusOne=msgOne, statusTwo=msgTwo)
+	return render_template('checkOutPage.html', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
+
 # main method that just runs the app	
 if __name__ == "__main__":
 	# create the hardware sets amd add them to their database

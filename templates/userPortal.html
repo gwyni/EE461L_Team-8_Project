@@ -19,31 +19,9 @@
 	</div>
 	<button type='submit' name='new_project' value= 'new project'>Submit New Project</button>
 	<br>
+	<button type='submit' name='addresources' value="go to resources">Add Resources</button>
 	<p>{{projectCheck}}</p>	
 	<br>
 	<button type='submit' name='logout' value='do logout'>Logout and Return to Home Sreen</button>
-</form>
-<form method='POST'>
-	<div class="form-group">
-		
-		<h2>Hardware Set 1:</h2>
-		<p>Availability: {{available}}</p>
-		<p>Capacity: {{initialCap}}</p>
-		<label for="requestedHW1">Request Resources (Enter 1-100):</label><br>
-		<input type="number" id="requestedHW1" name="requestedHW1">
-		<button type="submit">Checkout</button>
-		<p>{{statusOne}}</p>	
-	</div>
-</form>
-<form method='POST'>
-	<div class="form-group">
-		<h2>Hardware Set 2:</h2>
-		<p>Availability: {{available2}}</p>
-		<p>Capacity: {{initialCap2}}</p>
-		<label for="requestedHW2">Request Resources (Enter 1-100):</label><br>
-		<input type="number" id="requestedHW2" name="requestedHW2">
-		<button type="submit">Checkout</button>
-		<p>{{statusTwo}}</p>
-	</div>
 </form>
 {% endblock %}
