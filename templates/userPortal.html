@@ -1,33 +1,64 @@
-{% extends 'base.html' %}
-
-{% block head %}
-
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel='stylesheet' type='text/css'>
+{% extends "base.html" %}
+{% block title %}{{ super() }}User Portal{% endblock %}
+{% block head %} {{ super() }}
+<link rel="stylesheet" href="../static/css/userPortal.css">
 {% endblock %}
 
 {% block body %}
-<form method='POST'>
-	<p>User Portal</p><br>
-	<p>{{content}}</p>	
-	<label>Create New Project</label>
-	<div class="form-group">
-		<label>Project Name</label>
-		<input type="text" name="project name">
-	</div>
-	<div class="form-group">
-		<label>Project Description</label>
-		<input type="text" name="description">
-	</div>
-	<button type='submit' name='new_project' value= 'new project'>Submit New Project</button>
-	<br>
-	<br>
-	<div class="form-group">
-		<label>Manage Project(Enter project name):</label><br>
-		<input type="text" name="manage_project">
-	</div>
-	<p>{{projectManageStatus}}</p>
-	<button type='submit' name='addresources' value="go to resources">Go to Project Portal</button>
-	<p>{{projectCheck}}</p>	
-	<br>
-	<button type='submit' name='logout' value='do logout'>Logout and Return to Home Screen</button>
-</form>
+<div class="container">
+	<form method='POST'>
+		<h1>{{content}}</h1>
+		<hr class="new1">	
+		<h3>Create New Project</h3>
+		<div class="row">
+			<div class="small-column">
+			<label>Project Name</label>
+			</div>
+			<div class="big-column">
+				<input type="text" name="project name">
+			</div>
+		</div>
+		<div class="row">
+			<div class="small-column">
+				<label>Description</label>
+			</div>
+			<div class="big-column">
+				<input type="text" name="description">
+			</div>
+		</div>
+		<div class="row">		
+			<div class = "biggest-col">
+				<button type='submit' name='new_project' value= 'new project'>Submit New Project</button>
+			</div>
+		</div>
+		<br>
+		<br>
+		<hr class="new1">
+		<h3>Manage Preexisting Project</h3>
+		<div class="row">
+			<div class="small-column">
+			<label>Project Name</label>
+			</div>
+			<div class="big-column">
+				<input type="text" name="manage_project">
+			</div>
+		</div>
+		<p style="background-color:red;">{{projectManageStatus}}</p>
+		<div class="row">		
+			<div class = "biggest-col">
+				<button type='submit' name='addresources' value="go to resources">Go to Project Portal</button>
+			</div>
+		</div>
+		<p style="background-color:red;">{{[projectCheck]}}</p>
+		<br>
+		<hr class="new1">
+		<div class="row">		
+			<div class = "biggest-col">
+				<button type='submit' name='logout' value='do logout'>Logout and Return to Home Screen</button>
+			</div>
+		</div>
+	</form>
+</div>
+
 {% endblock %}
