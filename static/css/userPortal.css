@@ -26,9 +26,14 @@ hr.new1 {
     border-top: 3px solid black;
   }
 
+  hr.new2 {
+    margin-top: 20px;
+    border: 2px solid black;
+  }
+
 /* paragraph formatting */
 p {
-    margin: 0px, 0px, 0px, 0px;
+    margin-bottom: 0px;
 	font-family: 'Roboto Mono', monospace;
 	color: darkslategray;
 	font-size:12px;
