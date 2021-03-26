@@ -212,7 +212,7 @@ def checkOut(project):
 			print("reached")
 			return redirect(url_for('userPortal'))
 		#print(checkOutInfo)
-	return render_template('checkOutPage.html', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
+	return render_template('checkoutPage.html', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
 
 # main method that just runs the app	
 if __name__ == "__main__":
