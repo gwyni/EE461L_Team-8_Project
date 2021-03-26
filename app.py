@@ -138,7 +138,7 @@ def validCheckoutInput(requested, available):
 def userPortal():
 	projectMsg = ""
 	displayUser = ""
-	
+	projectManageMsg=""
 	if 'username' in session:
 			displayUser = session['username']
 	if(request.method=='POST'):
@@ -164,13 +164,22 @@ def userPortal():
 			session.pop('username')
 			return redirect(url_for('login'))
 		if request.form.get('addresources'):
-			return redirect(url_for('checkOut',project="kelly")) # need to change this to pass in project name
-		
+			project_to_manage=resourcesInfo.get("manage_project")
+			projectInfo=projectDb.find_one({"Project Name": project_to_manage})
+			if projectInfo is not None:	
+				projectUsers=projectInfo["Users in Project"]
+				if displayUser in projectUsers:
+					return redirect(url_for('checkOut',project=project_to_manage)) 
+				else:
+					projectManageMsg="Sorry, you are not a user on this project"
+			else:
+				projectManageMsg="Project entered does not exist"
 			#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
-	return render_template('userPortal.html',content='Hello, ' + displayUser + '!',projectCheck=projectMsg)
+	return render_template('userPortal.html',content='Hello, ' + displayUser + '!',projectCheck=projectMsg, projectManageStatus= projectManageMsg)
 
 @app.route('/checkOut/<project> ', methods=['GET','POST'])
 def checkOut(project):
+
 	msgOne= ""
 	msgTwo=""
 	projectInfo=projectDb.find_one({"Project Name": project})
@@ -209,7 +218,6 @@ def checkOut(project):
 				updatedResource={"$set": {"HW Set 2 Resources" : project_hw2 +requestedTwo}}
 				projectDb.update_one(pName, updatedResource)
 		elif request.form.get('returnToUP'):
-			print("reached")
 			return redirect(url_for('userPortal'))
 		#print(checkOutInfo)
 	return render_template('checkoutPage.html', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
