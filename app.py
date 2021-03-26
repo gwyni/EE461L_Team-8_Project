@@ -132,6 +132,7 @@ def validCheckoutInput(requested, available):
 	elif(requested>available):
 		return 3 		# Error 3: requested too many resources
 	return 4			# no error
+
 # below displays the HTML for the user portal page
 
 @app.route('/userPortal',methods=['GET','POST'])
@@ -219,7 +220,32 @@ def checkOut(project):
 				projectDb.update_one(pName, updatedResource)
 		elif request.form.get('returnToUP'):
 			return redirect(url_for('userPortal'))
-		#print(checkOutInfo)
+		elif request.form.get("checkinHW1"):
+			requestedOne=int(resourcesInfo["requestedHW1"])
+			project_hw1=projectInfo["HW Set 1 Resources"]
+			if(requestedOne > 0 and requestedOne<=project_hw1):
+				old={"ID":"HWSet_1"}
+				updated={"$set": {"Availability" : availOne+requestedOne}}
+				availOne=availOne+requestedOne
+				hwDb.update_one(old,updated)
+				pName={"Project Name": project}
+				updatedResource={"$set": {"HW Set 1 Resources" : project_hw1-requestedOne}}
+				projectDb.update_one(pName, updatedResource)
+			else:
+				msgOne="Please enter valid number of resources"
+		elif request.form.get("checkinHW2"):
+			requestedTwo=int(resourcesInfo["requestedHW2"])
+			project_hw2=projectInfo["HW Set 2 Resources"]
+			if(requestedTwo > 0 and requestedTwo<=project_hw2):
+				old={"ID":"HWSet_2"}
+				updated={"$set": {"Availability" : availTwo+requestedTwo}}
+				availTwo=availTwo+requestedTwo
+				hwDb.update_one(old,updated)
+				pName={"Project Name": project}
+				updatedResource={"$set": {"HW Set 2 Resources" : project_hw2-requestedTwo}}
+				projectDb.update_one(pName, updatedResource)
+			else:
+				msgTwo="Please enter valid number of resources"
 	return render_template('checkoutPage.html', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
 
 # main method that just runs the app	
