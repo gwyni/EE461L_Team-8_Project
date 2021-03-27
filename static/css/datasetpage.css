@@ -1,0 +1,34 @@
+table, th, td {
+    border: 1px solid black;
+    background-color: #EDDFA3;
+}
+
+th, td {
+    padding: 20px;
+}
+
+table.center {
+      margin-right: auto; 
+      margin-left: auto; 
+}
+
+body{
+	font-family: 'Roboto Mono', monospace;
+	background:#124A9C;
+	margin: 0 auto 0 auto;  
+	width:100%; 
+	text-align:center;
+	margin: 20px 0px 20px 0px;
+}
+
+.titlebox {
+	border-radius:3px;
+	margin: 0 auto 0 auto;
+	max-width: 500px;
+    height: 125px;
+	margin: auto;
+	border: 5px double black;
+	background-color: #EDDFA3;
+	padding: 0px 20px 0px 20px;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
