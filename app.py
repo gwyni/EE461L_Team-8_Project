@@ -284,7 +284,7 @@ def checkOut(project):
 				projectDb.update_one(pName, updatedResource)
 			else:
 				msgTwo="Please enter valid number of resources"
-	return render_template('checkoutPage.html', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo, )
+	return render_template('checkoutPage.html', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
 
 # main method that just runs the app	
 if __name__ == "__main__":
