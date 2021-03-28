@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<h1>Manage Resources</h1>
+
+<form method='POST'>
+	<div class="row">		
+		<div class = "biggest-col">
+			<button type='submit' name='leaveproject' value="leave project">Leave Project</button>
+		</div>
+	</div>
+	<div class="form-group">
+		
+		<h2>Hardware Set 1:</h2>
+		<p>Availability: {{available}}</p>
+		<p>Capacity: {{initialCap}}</p>
+		<label for="requestedHW1">Request Resources (Enter 1-100):</label><br>
+		<input type="number" id="requestedHW1" name="requestedHW1">
+		<button type="submit" name="submitHW1" value="send request">Checkout</button>
+		<button type="submit" name="checkinHW1" value="send request">Check In</button>
+		<p>{{statusOne}}</p>	
+	</div>
+</form>
+<form method='POST'>
+	<div class="form-group">
+		<h2>Hardware Set 2:</h2>
+		<p>Availability: {{available2}}</p>
+		<p>Capacity: {{initialCap2}}</p>
+		<label for="requestedHW2">Request Resources (Enter 1-100):</label><br>
+		<input type="number" id="requestedHW2" name="requestedHW2">
+		<button type="submit" name="submitHW2" value="send request">Checkout</button>
+		<button type="submit" name="checkinHW2" value="send request">Check In</button>
+		<p>{{statusTwo}}</p><br>
+    <br>
+    <button type="submit" name='returnToUP' value="go back">Return to User Portal</button>
+	</div>
+</form>
+</body>
+</html>
+{% endblock %}

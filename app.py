@@ -140,6 +140,7 @@ def userPortal():
 	projectMsg = ""
 	displayUser = ""
 	projectManageMsg=""
+	projectJoinMsg=""
 	if 'username' in session:
 			displayUser = session['username']
 	if(request.method=='POST'):
@@ -159,11 +160,35 @@ def userPortal():
 			else:
 				projectMsg = "You must enter a project name."
 
+
+		if request.form.get('joinproject'):
+                                        project_to_join=resourcesInfo.get("join_project")
+                                        
+                                        projectInfo=projectDb.find_one({"Project Name": project_to_join})
+                                        if projectInfo is not None:
+                                                projectUsers=projectInfo["Users in Project"]
+                                                        
+                                                if displayUser in projectUsers:
+                                                        projectJoinMsg="You are already a user on this project"
+                                                        #if user is found in project database, then they should not be added again
+
+                                                else:
+                                                        old = {"Project Name": projectInfo["Project Name"], "Description":projectInfo["Description"], "HW Set 1 Resources":projectInfo["HW Set 1 Resources"], "HW Set 2 Resources":projectInfo["HW Set 1 Resources"]}
+                                                        updated = {'$push': {"Users in Project": displayUser}}
+                                                        projectDb.update_one(old, updated)
+                                                        projectJoinMsg = "Successfully joined project!"
+                                                        #if user is not already in project, they may join the project
+                                        else:
+                                                projectJoinMsg="Project entered does not exist" 
+
+
+		
 		# if the logout button has been pressed
 		if request.form.get('logout'):
 			# unsave the username and return to main screen
 			session.pop('username')
 			return redirect(url_for('login'))
+		
 		if request.form.get('addresources'):
 			project_to_manage=resourcesInfo.get("manage_project")
 			projectInfo=projectDb.find_one({"Project Name": project_to_manage})
@@ -176,13 +201,16 @@ def userPortal():
 			else:
 				projectManageMsg="Project entered does not exist"
 			#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
-	return render_template('userPortal.html',content='Hello, ' + displayUser + '!',projectCheck=projectMsg, projectManageStatus= projectManageMsg)
+				
+	return render_template('userPortal.html',content='Hello, ' + displayUser + '!',projectCheck=projectMsg, projectManageStatus= projectManageMsg, joinStatus=projectJoinMsg)
 
 @app.route('/checkOut/<project> ', methods=['GET','POST'])
 def checkOut(project):
 
 	msgOne= ""
 	msgTwo=""
+	user = ""
+	projectLeaveMsg = ""
 	projectInfo=projectDb.find_one({"Project Name": project})
 	hwSetOne=hwDb.find_one({"ID":"HWSet_1"})
 	capOne=hwSetOne["Capacity"]
@@ -190,8 +218,11 @@ def checkOut(project):
 	hwSetTwo=hwDb.find_one({"ID":"HWSet_2"})
 	capTwo=hwSetTwo["Capacity"]
 	availTwo=hwSetTwo["Availability"]
+	user = session['username']                         
 	if(request.method=='POST'):
 		resourcesInfo = request.form
+		
+
 		if request.form.get("submitHW1"):
 			requestedOne=int(resourcesInfo["requestedHW1"])
 			result=validCheckoutInput(requestedOne, availOne)
@@ -220,6 +251,13 @@ def checkOut(project):
 				projectDb.update_one(pName, updatedResource)
 		elif request.form.get('returnToUP'):
 			return redirect(url_for('userPortal'))
+		elif request.form.get('leaveproject'):
+                                        #if user leaves project, remove their name from the project user list and return to user portal
+                                        old = {"Project Name": projectInfo["Project Name"], "Description":projectInfo["Description"], "HW Set 1 Resources":projectInfo["HW Set 1 Resources"], "HW Set 2 Resources":projectInfo["HW Set 1 Resources"]}
+                                        updated = {'$pull': {"Users in Project": user}}
+                                        projectDb.update_one(old, updated)
+                                        return redirect(url_for('userPortal'))
+                                
 		elif request.form.get("checkinHW1"):
 			requestedOne=int(resourcesInfo["requestedHW1"])
 			project_hw1=projectInfo["HW Set 1 Resources"]
@@ -246,7 +284,7 @@ def checkOut(project):
 				projectDb.update_one(pName, updatedResource)
 			else:
 				msgTwo="Please enter valid number of resources"
-	return render_template('checkoutPage.html', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
+	return render_template('checkoutPage.html', available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo, )
 
 # main method that just runs the app	
 if __name__ == "__main__":
