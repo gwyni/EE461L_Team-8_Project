@@ -159,8 +159,22 @@ def userPortal():
 					projectMsg = "That name has already been used! Please enter a new name."
 			else:
 				projectMsg = "You must enter a project name."
+		
+		# if the  Go to Project Portal button has been pressed
+		if request.form.get('addresources'):
+			project_to_manage=resourcesInfo.get("manage_project")
+			projectInfo=projectDb.find_one({"Project Name": project_to_manage})
+			if projectInfo is not None:	
+				projectUsers=projectInfo["Users in Project"]
+				if displayUser in projectUsers:
+					return redirect(url_for('checkOut',project=project_to_manage)) 
+				else:
+					projectManageMsg="Sorry, you are not a user on this project"
+			else:
+				projectManageMsg="Project entered does not exist"
+			#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
 
-
+		# if the Join Preexisting Project Button has been pressed
 		if request.form.get('joinproject'):
 			project_to_join=resourcesInfo.get("join_project")
 			projectInfo=projectDb.find_one({"Project Name": project_to_join})
@@ -181,25 +195,18 @@ def userPortal():
 					projectJoinMsg = "Successfully joined project!"
 			else:
 				projectJoinMsg="Project entered does not exist" 
-		
+
 		# if the logout button has been pressed
 		if request.form.get('logout'):
 			# unsave the username and return to main screen
 			session.pop('username')
 			return redirect(url_for('login'))
-		
-		if request.form.get('addresources'):
-			project_to_manage=resourcesInfo.get("manage_project")
-			projectInfo=projectDb.find_one({"Project Name": project_to_manage})
-			if projectInfo is not None:	
-				projectUsers=projectInfo["Users in Project"]
-				if displayUser in projectUsers:
-					return redirect(url_for('checkOut',project=project_to_manage)) 
-				else:
-					projectManageMsg="Sorry, you are not a user on this project"
-			else:
-				projectManageMsg="Project entered does not exist"
-			#return render_template('userPortal.html',content='Hello, ' + displayUser + '!')
+
+		# if the Delete Account button has been pressed
+		if request.form.get('delete'):
+			userDb.delete_one({"username":displayUser})
+			session.pop('username')
+			return redirect(url_for('login'))
 				
 	return render_template('userPortal.html',content='Hello, ' + displayUser + '!',projectCheck=projectMsg, projectManageStatus= projectManageMsg, joinStatus=projectJoinMsg)
 
