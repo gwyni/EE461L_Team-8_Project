@@ -1,0 +1,61 @@
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel='stylesheet' type='text/css'>
+{% extends "base.html" %}
+{% block title %}{{ super() }}Change Password{% endblock %}
+{% block head %} {{ super() }}
+<link rel="stylesheet" href="../static/css/changePass.css">
+{% endblock %}
+
+{% block body %}
+<div class="container">
+	<h1>Change Password</h1>
+	<form method='POST'>
+		<div class="row">
+			<div class="small-column">
+				<label>Username</label>
+			</div>
+			<div class="big-column">
+				<input type="text" name="username">
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="small-column">
+				<label>Old Password</label>
+			</div>
+			<div class="big-column">
+				<input type="password" name="password">
+			</div>
+		</div>
+
+        <div class="row">
+			<div class="small-column">
+				<label>New Password</label>
+			</div>
+			<div class="big-column">
+				<input type="password" name="password">
+			</div>
+		</div>
+
+        <div class="row">
+			<div class="small-column">
+				<label>Retype Password</label>
+			</div>
+			<div class="big-column">
+				<input type="password" name="password">
+			</div>
+		</div>
+
+		<div class="row">
+			<button type='submit' name='login' value='logged in'>Change</button>
+			<button type='submit' name='signUp' value ='signing in'>Sign Up</button>
+			<!--
+			<a href="#"><div id="signUp">Sign Up</div></a>
+			-->
+		</div>
+		<p style="background-color:red;">{{content}}</p>
+
+	</div>
+	</form>
+</div>
+
+{% endblock %}

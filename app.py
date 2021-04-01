@@ -207,6 +207,8 @@ def userPortal():
 			userDb.delete_one({"username":displayUser})
 			session.pop('username')
 			return redirect(url_for('login'))
+
+		#if the Change Password button has been pressed
 				
 	return render_template('userPortal.html',content='Hello, ' + displayUser + '!',projectCheck=projectMsg, projectManageStatus= projectManageMsg, joinStatus=projectJoinMsg)
 
