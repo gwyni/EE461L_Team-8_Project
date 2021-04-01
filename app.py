@@ -300,7 +300,7 @@ def checkOut(project):
 	return render_template('checkoutPage.html', displayProject=modifyingProject,available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
 
 
-
+#This is for the main datasets page
 @app.route('/datasets', methods = ["POST", "GET"])
 def home():
 	if request.method == "POST":
@@ -309,6 +309,7 @@ def home():
 	else:
 		return render_template("datasetpage.html")
 
+#This page is for adding new datasets
 @app.route('/datasets/index')
 def index():
 	return '''
@@ -320,6 +321,7 @@ def index():
 		</form>
 	'''
 
+#This is used by '/index' to create new datasets
 @app.route('/datasets/create', methods=['POST'])
 def create():
 	if 'data' in request.files:
@@ -331,10 +333,13 @@ def create():
 
 #done <iframe src = "{url_for('file', filename = user['description'])}" width = "100%" height = "300">
 
+#This is used by 'fnd' to find and download the correct datasets
 @app.route('/datasets/file/<filename>')
 def file(filename):
 	return mongo4.send_file(filename)
 
+
+#This page finds and downloads the correct datasets
 @app.route('/datasets/fnd/<he>', methods = ["POST", "GET"])
 def fnd(he):
 	#index()
@@ -355,15 +360,6 @@ def fnd(he):
 	return f'''
 		<h1>{bill}</h1>
 		<h1>{he}</h1>
-		<iframe src ="{url_for('file', filename =user['data_name'])}" width = "0%"  height = "0">
-		'''
-
-
-@app.route('/datasets/profile/<username>')
-def profile(username):
-	user = mongo4.db.users.find_one_or_404({'username' : username})
-	return f'''
-		<h1>{username}</h1>
 		<iframe src ="{url_for('file', filename =user['data_name'])}" width = "0%"  height = "0">
 		'''
 
