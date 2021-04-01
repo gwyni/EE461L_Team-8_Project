@@ -1,24 +1,17 @@
-{% extends 'base.html' %}
-
-{% block head %}
-
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel='stylesheet' type='text/css'>
+{% extends "base.html" %}
+{% block title %}{{ super() }}Manage Resources{% endblock %}
+{% block head %} {{ super() }}
+<link rel="stylesheet" href="../static/css/checkout.css">
 {% endblock %}
 
 {% block body %}
-<!DOCTYPE html>
-<html>
-<head>
-	<title></title>
-</head>
-<body>
-<h1>Manage Resources</h1>
-<p>{{displayProject}}</p>
-<br>
-
+<div class="container">
 <form method='POST'>
+	<h1>Manage Resources</h1>
+	<p>{{displayProject}}</p>
 	<div class="row">		
 		<div class = "biggest-col">
-			<button type='submit' name='leaveproject' value="leave project">Leave Project</button>
 		</div>
 	</div>
 	<div class="form-group">
@@ -44,9 +37,15 @@
 		<button type="submit" name="checkinHW2" value="send request">Check In</button>
 		<p>{{statusTwo}}</p><br>
     <br>
-    <button type="submit" name='returnToUP' value="go back">Return to User Portal</button>
+	<div class="row">		
+		<div class = "biggest-col">
+			<button type='submit' style="color: #5f5019; background-color:#ffd744;	border: #d1a401 1px solid;
+			margin-right: 2px; font-size: 15px; height: 30px; width:170px; margin-top: 0px;" name='returnToUP' value="go back">Return to User Portal</button>
+			<button type='submit' style="color: #5f5019; background-color:#ffd643;	border: #d1a401 1px solid;
+			margin-right: 2px; font-size: 15px; height: 30px; width:170px; margin-top: 0px;" name='leaveproject' value="leave project">Leave Project</button>
+		</div>
+	</div>
 	</div>
 </form>
-</body>
-</html>
+</div>
 {% endblock %}

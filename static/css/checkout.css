@@ -1,0 +1,143 @@
+/* body formatting */
+body{
+	font-family: 'Roboto Mono', monospace;
+	background:#124A9C;
+	margin: 0 auto 0 auto;  
+	width:100%; 
+	text-align:center;
+	margin: 20px 0px 20px 0px;
+}
+
+/* "Welcome Back" formatting */
+h1{
+	font-size:1.5em;
+	color:#525252;
+}
+
+h3{
+    color: white;
+    background-color: #3498db;
+    margin: 0px 0px 0px 0px;   
+}
+
+hr.new1 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-top: 3px solid black;
+  }
+
+  hr.new2 {
+    margin-top: 20px;
+    border: 2px solid black;
+  }
+
+/* paragraph formatting */
+p {
+    margin-bottom: 0px;
+	font-family: 'Roboto Mono', monospace;
+	color: darkslategray;
+	font-size:12px;
+	text-decoration: none;
+	color:white;
+}
+
+/* formatting for the input boxes */
+input{
+	width: 100%;
+	padding: 5px;
+	border: 2px solid black;
+	border-radius: 4px;
+	resize: vertical;
+	float: right;
+}
+
+/*formatting for the labels, i.e. "username", "password", and the buttons*/
+label {
+	padding: 5px 10px 0px 0px;
+	display: inline-block;
+}
+
+
+/* formatting for the container that holds two columns */
+.container {
+	border-radius:6px;
+	margin: 0 auto 0 auto;
+	max-width: 500px;
+    	height: 590px;
+	margin: auto;
+	border: 5px double black;
+	background-color: #EDDFA3;
+	padding: 10px 20px 5px 20px;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+  /* the smaller of the two columns which holds "username" and "password" text */
+  .small-column {
+	font-size: 15px;
+	float: left;
+	width: 30%;
+	margin-top: 5px;
+  }
+  
+  /* the bigger of the two columns which holds input boxes*/
+  .big-column {
+	float: left;
+	width: 70%;
+	margin-top: 6px;
+  }
+
+  .biggest-col{
+    margin: 0px, 0px, 0px, 0px;
+    position: absolute;
+    left: 50%;
+    -ms-transform: translateX(-50%);
+    transform: translateX(-50%);
+  }
+
+  /* note: the third row contains the buttoms */
+.row:after {
+	content: "";
+	display: table;
+	clear: both;
+  }
+
+/* styling for the "Login" button */
+button[type=submit] {
+	background:#2ecc71;
+	width:500px;
+	padding-top:5px;
+	padding-bottom:5px;
+	color:white;
+	border-radius:4px;
+	border: #27ae60 1px solid;
+	
+	margin-top:10px;
+	margin-bottom:10px;
+	float:left;
+	font-family: 'Roboto Mono', monospace;
+	font-weight:800;
+	font-size:1em;
+  }
+ button:hover {	 background:#2CC06B;}
+
+/* styling for the "Sign-Up" button */
+  #btn2{
+	float:left;
+	background:#3498db;
+	width:125px;  padding-top:5px;
+	padding-bottom:5px;
+	color:white;
+	border-radius:4px;
+	border: #2980b9 1px solid;
+	
+	margin-top:20px;
+	margin-bottom:10px;
+	margin-left:10px;
+	font-weight:800;
+	font-size:0.8em;
+  }
+  
+  #btn2:hover{ 
+  background:#3594D2; 
+  }
+
+  
