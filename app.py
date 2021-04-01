@@ -20,6 +20,10 @@ projectDb = mongo2.db.projects
 mongo3 = PyMongo(app,uri='mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/hardware?retryWrites=true&w=majority')
 hwDb = mongo3.db.hardwareSets
 
+mongo4 = PyMongo(app,uri='mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/datasets?retryWrites=true&w=majority')
+datasetsDB = mongo.db.datasets
+
+
 app.secret_key = b'5tei3of8g5rg3i/'
 
 # prints out the contents of a database
@@ -294,6 +298,80 @@ def checkOut(project):
 			else:
 				msgTwo="Please enter valid number of resources"
 	return render_template('checkoutPage.html', displayProject=modifyingProject,available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
+
+
+
+@app.route('/datasets', methods = ["POST", "GET"])
+def home():
+	if request.method == "POST":
+		user = request.form["username"]
+		return redirect(url_for("fnd", he = user))
+	else:
+		return render_template("datasetpage.html")
+
+@app.route('/datasets/index')
+def index():
+	return '''
+		<form method = "POST" action ="/create" enctype = "multipart/form-data">
+			<input type ="text" name ="username">
+			<input type ="text" name = "description">
+			<input type ="file" name ="data">
+			<input type ="submit">
+		</form>
+	'''
+
+@app.route('/datasets/create', methods=['POST'])
+def create():
+	if 'data' in request.files:
+		data = request.files['data']
+		mongo4.save_file(data.filename, data)
+		mongo4.db.sets.insert({'username' : request.form.get('username'), 'description' : request.form.get('description'), 'data_name' : data.filename})
+		
+	return 'done'
+
+#done <iframe src = "{url_for('file', filename = user['description'])}" width = "100%" height = "300">
+
+@app.route('/datasets/file/<filename>')
+def file(filename):
+	return mongo4.send_file(filename)
+
+@app.route('/datasets/fnd/<he>', methods = ["POST", "GET"])
+def fnd(he):
+	#index()
+	print(he)
+	#if(he == "data2.zip"):
+	#	se = mongo.db.fs.files.find({'filename' : "data2.zip"})
+
+	se = mongo4.db.fs.files.find({'filename' : he})
+	a = ["a", "b"]
+	for st in se:
+		a.append(st)
+	bill = str(a)
+	z = bill.split("filename': '", 1)
+	bill = z[1]
+	y = z[1].split("'", 1)
+	bill = y[0]
+	user = mongo4.db.sets.find_one_or_404({'data_name' : y[0]})
+	return f'''
+		<h1>{bill}</h1>
+		<h1>{he}</h1>
+		<iframe src ="{url_for('file', filename =user['data_name'])}" width = "0%"  height = "0">
+		'''
+
+
+@app.route('/datasets/profile/<username>')
+def profile(username):
+	user = mongo4.db.users.find_one_or_404({'username' : username})
+	return f'''
+		<h1>{username}</h1>
+		<iframe src ="{url_for('file', filename =user['data_name'])}" width = "0%"  height = "0">
+		'''
+
+
+
+
+
+
 
 # main method that just runs the app	
 if __name__ == "__main__":

@@ -1,78 +1,122 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel='stylesheet' type='text/css'>
-
 {% extends 'base.html' %}
-
 {% block head %}
 <link rel="stylesheet" href="../static/css/datasetpage.css">
 {% endblock %}
 
 {% block body %}
-<!DOCTYPE html>
 <html>
-<div class = "titlebox">
-  <h1>Datasets</h1>
-  <p>Click the available dataset to download it as a zip file</p>
-</div>
-<body>
-    <p> </p>
-    
-    <table class="center">
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Download Link</th>
-      </tr>
-      <tr>
-        <td>Set 1</td>
-        <td>This is Dataset 1</td>
-        <td> Download Here</td>
-      </tr>
-      <tr>
-        <td>Set 2</td>
-        <td>This is Dataset 2</td>
-        <td> Download Here</td>
-      </tr>
-      <tr>
-        <td>Set 3</td>
-        <td>This is Dataset 3</td>
-        <td> Download Here</td>
-      </tr>
-      <tr>
-        <td>Set 4</td>
-        <td>This is Dataset 4</td>
-        <td> Download Here</td>
-      </tr>
-      <tr>
-        <td>Set 5</td>
-        <td>This is Dataset 5</td>
-        <td> Download Here</td>
-      </tr>
-      <tr>
-        <td>Set 6</td>
-        <td>This is Dataset 6</td>
-        <td> Download Here</td>
-      </tr>
-      <tr>
-        <td>Set 7</td>
-        <td>This is Dataset 7</td>
-        <td> Download Here</td>
-      </tr>
-      <tr>
-        <td>Set 8</td>
-        <td>This is Dataset 8</td>
-        <td> Download Here</td>
-      </tr>
-      <tr>
-        <td>Set 9</td>
-        <td>This is Dataset 9</td>
-        <td> Download Here</td>
-      </tr>
-      <tr>
-        <td>Set 10</td>
-        <td>This is Dataset 10</td>
-        <td> Download Here</td>
-      </tr>
-    </table>
-</body>
+    <head>
+        <title> plz work</title>
+
+    </head>
+	<div class = "titlebox">
+		<h1>Datasets</h1>
+		<h2>Click the available dataset to download it as a zip file</h2>
+	  </div>
+
+
+    <body>
+		<p> </p>
+		<table class="center">
+			<tr>
+			  <th>Name</th>
+			  <th>Description</th>
+			  <th>Download Link</th>
+			</tr>
+			<tr>
+			  <td>Set 1</td>
+			  <td>This is Dataset 1</td>
+			  <td> 
+				<form method = "POST"  action = "/datasets/fnd/data1.zip" enctype = "multipart/form-data">
+					<input type ="submit" value = "Download">
+				</form>
+			  </td>
+			</tr>
+			<tr>
+			  <td>Set 2</td>
+			  <td>This is Dataset 2</td>
+			  <td> 
+				<form method = "POST"  action = "/datasets/fnd/data2.zip" enctype = "multipart/form-data">
+					<input type ="submit" value = "Download">
+				</form>
+			  </td>
+			</tr>
+			<tr>
+			  <td>Set 3</td>
+			  <td>This is Dataset 3</td>
+			  <td> 
+				<form method = "POST"  action = "/datasets/fnd/data3.zip" enctype = "multipart/form-data">
+					<input type ="submit" value = "Download">
+				</form>
+			  </td>
+			</tr>
+			<tr>
+			  <td>Set 4</td>
+			  <td>This is Dataset 4</td>
+			  <td> 
+				<form method = "POST"  action = "/datasets/fnd/data4.zip" enctype = "multipart/form-data">
+					<input type ="submit" value = "Download">
+				</form>
+			  </td>
+			</tr>
+			<tr>
+			  <td>Set 5</td>
+			  <td>This is Dataset 5</td>
+			  <td> 
+				<form method = "POST"  action = "/datasets/fnd/data5.zip" enctype = "multipart/form-data">
+					<input type ="submit" value = "Download">
+				</form>
+			  </td>
+			</tr>
+			<tr>
+			  <td>Set 6</td>
+			  <td>This is Dataset 6</td>
+			  <td> 
+				<form method = "POST"  action = "/datasets/fnd/data6.zip" enctype = "multipart/form-data">
+					<input type ="submit" value = "Download">
+				</form>
+			  </td>
+			</tr>
+			<tr>
+			  <td>Set 7</td>
+			  <td>This is Dataset 7</td>
+			  <td> 
+				<form method = "POST"  action = "/datasets/fnd/data7.zip" enctype = "multipart/form-data">
+					<input type ="submit" value = "Download">
+				</form>
+			  </td>
+			</tr>
+			<tr>
+			  <td>Set 8</td>
+			  <td>This is Dataset 8</td>
+			  <td> 
+				<form method = "POST"  action = "/datasets/fnd/data8.zip" enctype = "multipart/form-data">
+					<input type ="submit" value = "Download">
+				</form>
+			  </td>		
+			</tr>
+			<tr>
+			  <td>Set 9</td>
+			  <td>This is Dataset 9</td>
+			  <td> 
+				<form method = "POST"  action = "/datasets/fnd/data9.zip" enctype = "multipart/form-data">
+					<input type ="submit" value = "Download">
+				</form>
+			  </td>
+			</tr>
+			<tr>
+			  <td>Set 10</td>
+			  <td>This is Dataset 10</td>
+			  <td> 
+				<form method = "POST"  action = "/datasets/fnd/data10.zip" enctype = "multipart/form-data">
+					<input type ="submit" value = "Download">
+				</form>
+			  </td>
+			</tr>
+		  </table>
+        <br>
+    </body>
+
 </html>
 {% endblock %}
