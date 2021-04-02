@@ -45,20 +45,20 @@ input{
 
 /*formatting for the labels, i.e. "username", "password", and the buttons*/
 label {
+	font-size: 13px;
 	padding: 5px 10px 0px 0px;
 	display: inline-block;
 }
 
-
 /* formatting for the container that holds two columns */
 .container {
-	border-radius:6px;
+	border-radius:3px;
 	margin: 0 auto 0 auto;
-	max-width: 300px;
+	max-width: 375px;
 	margin: auto;
 	border: 5px double black;
 	background-color: #EDDFA3;
-	padding: 10px 20px 5px 20px;
+	padding: 5px 15px 5px 15px;
 	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
     height: auto;
 }
@@ -66,14 +66,14 @@ label {
   .small-column {
 	font-size: 15px;
 	float: left;
-	width: 30%;
+	width: 35%;
 	margin-top: 5px;
   }
   
   /* the bigger of the two columns which holds input boxes*/
   .big-column {
 	float: left;
-	width: 70%;
+	width: 65%;
 	margin-top: 6px;
   }
 
@@ -87,40 +87,18 @@ label {
 /* styling for the "Login" button */
 button[type=submit] {
 	background:#2ecc71;
-	width:125px;
+	width:175px;
 	padding-top:5px;
 	padding-bottom:5px;
 	color:white;
 	border-radius:4px;
 	border: #27ae60 1px solid;
-	
-	margin-top:20px;
-	margin-bottom:10px;
 	float:left;
-	margin-left:16px;
+	margin-top:5px;
+	margin-bottom:10px;
+	margin-left: 10px;
 	font-family: 'Roboto Mono', monospace;
 	font-weight:800;
 	font-size:0.8em;
   }
  button:hover {	 background:#2CC06B;}
-
-/* styling for the "Sign-Up" button */
-  #btn2{
-	float:left;
-	background:#3498db;
-	width:125px;  padding-top:5px;
-	padding-bottom:5px;
-	color:white;
-	border-radius:4px;
-	border: #2980b9 1px solid;
-	
-	margin-top:20px;
-	margin-bottom:10px;
-	margin-left:10px;
-	font-weight:800;
-	font-size:0.8em;
-  }
-  
-  #btn2:hover{ 
-  background:#3594D2; 
-  }
