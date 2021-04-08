@@ -51,7 +51,7 @@ def passwordAlreadyExists(database,password):
 # returns true if an inputted password matches the username, returns False otherwise
 def passwordMatches(database,username,password):
 	userFound = database.find_one({"username":username})
-	print(userFound["password"])
+	#print(userFound["password"])
 	if(userFound["password"] == password):
 		return True
 	return False
@@ -212,9 +212,35 @@ def userPortal():
 			session.pop('username')
 			return redirect(url_for('login'))
 
+		if request.form.get('changePswrd'):
+			return redirect(url_for('changePassword'))
+
 		#if the Change Password button has been pressed
 				
 	return render_template('userPortal.html',content='Hello, ' + displayUser + '!',projectCheck=projectMsg, projectManageStatus= projectManageMsg, joinStatus=projectJoinMsg)
+
+@app.route('/changePass', methods=['GET','POST'])
+def changePassword():
+	username = session['username']
+	user = userDb.find_one({'username':username})
+	password = user['password']
+	msg = ""
+	if(request.method == 'POST'):
+		inputs = request.form
+		if inputs.get('new'):
+			if not inputs.get('old password') or not inputs.get('new password') or not inputs.get('confirm password'):
+				msg = "Empty field found"
+			elif inputs.get('old password') != password and inputs.get('new password') == inputs.get('confirm password'):
+				msg = "Previous password is not correct!"
+			elif inputs.get('new password') != inputs.get('confirm password') and inputs.get('old password') == password:
+				msg = "New passwords do not match!"
+			elif inputs.get('old password') != password and inputs.get('new password') != inputs.get('confirm password'):
+				msg = "Previous password is not correct and the new passwords do not match!"
+			elif inputs.get('old password') == password and inputs.get('new password') == inputs.get('confirm password'):
+				userDb.update_one({'username':username},{'$set':{'password':inputs.get('new password')}})
+		elif inputs.get('back'):
+			return redirect(url_for('userPortal'))
+	return render_template('changePass.html',content=msg)
 
 @app.route('/checkOut/<project> ', methods=['GET','POST'])
 def checkOut(project):
