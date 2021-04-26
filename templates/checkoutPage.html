@@ -7,7 +7,7 @@
 
 {% block body %}
 <div class="container">
-	
+
 <!--hardware set 1 block and information-->
 <form method='POST'>
 	<h1>Manage Resources</h1>
@@ -15,6 +15,12 @@
 	<div class="row">
 		<div class="big-column">
 			<h2>Hardware Set 1:</h2>
+			<select name=listHWs method="GET" action ="/">
+				{% for item in listHWs %}
+				<option value = "{{item}}" SELECTED>{{item}}</option>
+				{% endfor %}
+
+			</select>
 		</div>
 		<div class="small-column" style="margin-top: 5px;">
 			<p style="color: black;">Availability: {{available}} <br>Capacity: {{initialCap}}</p>

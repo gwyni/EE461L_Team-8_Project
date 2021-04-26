@@ -244,7 +244,13 @@ def changePassword():
 
 @app.route('/checkOut/<project> ', methods=['GET','POST'])
 def checkOut(project):
-
+	hwSetList=set()
+	print(hwDb)
+	x=hwDb.find({},{'_id' : 0,'Capacity':0, 'Availability':0})
+	for data in x:
+		if data["ID"] not in hwSetList:
+			hwSetList.add(data["ID"])
+	hwSetList = list(hwSetList)
 	msgOne= ""
 	msgTwo=""
 	user = ""
@@ -262,31 +268,37 @@ def checkOut(project):
 	if(request.method=='POST'):
 		resourcesInfo = request.form
 		if request.form.get("submitHW1"):
-			requestedOne=int(resourcesInfo["requestedHW1"])
-			result=validCheckoutInput(requestedOne, availOne)
-			msgOne=error_messages[result]	
-			if result==4:
-				old={"ID":"HWSet_1"}
-				updated={"$set": {"Availability" : availOne-requestedOne}}
-				availOne=availOne-requestedOne
-				hwDb.update_one(old,updated)
-				project_hw1=projectInfo["HW Set 1 Resources"]
-				pName={"Project Name": project}
-				updatedResource={"$set": {"HW Set 1 Resources" : project_hw1 +requestedOne}}
-				projectDb.update_one(pName, updatedResource)
+			if not resourcesInfo["requestedHW1"]:
+				msgOne="Please enter a nonempty value"
+			else:
+				requestedOne=int(resourcesInfo["requestedHW1"])
+				result=validCheckoutInput(requestedOne, availOne)
+				msgOne=error_messages[result]	
+				if result==4:
+					old={"ID":"HWSet_1"}
+					updated={"$set": {"Availability" : availOne-requestedOne}}
+					availOne=availOne-requestedOne
+					hwDb.update_one(old,updated)
+					project_hw1=projectInfo["HW Set 1 Resources"]
+					pName={"Project Name": project}
+					updatedResource={"$set": {"HW Set 1 Resources" : project_hw1 +requestedOne}}
+					projectDb.update_one(pName, updatedResource)
 		elif request.form.get("submitHW2"):
-			requestedTwo=int(resourcesInfo["requestedHW2"])
-			result=validCheckoutInput(requestedTwo,availTwo)
-			msgTwo=error_messages[result]
-			if result==4:
-				old={"ID":"HWSet_2"}
-				updated={"$set": {"Availability" : availTwo-requestedTwo}}
-				availTwo=availTwo-requestedTwo
-				hwDb.update_one(old,updated)
-				project_hw2=projectInfo["HW Set 2 Resources"]
-				pName={"Project Name": project}
-				updatedResource={"$set": {"HW Set 2 Resources" : project_hw2 +requestedTwo}}
-				projectDb.update_one(pName, updatedResource)
+			if not resourcesInfo["requestedHW2"]:
+				msgTwo="Please enter a nonempty value"
+			else:
+				requestedTwo=int(resourcesInfo["requestedHW2"])
+				result=validCheckoutInput(requestedTwo,availTwo)
+				msgTwo=error_messages[result]
+				if result==4:
+					old={"ID":"HWSet_2"}
+					updated={"$set": {"Availability" : availTwo-requestedTwo}}
+					availTwo=availTwo-requestedTwo
+					hwDb.update_one(old,updated)
+					project_hw2=projectInfo["HW Set 2 Resources"]
+					pName={"Project Name": project}
+					updatedResource={"$set": {"HW Set 2 Resources" : project_hw2 +requestedTwo}}
+					projectDb.update_one(pName, updatedResource)
 		elif request.form.get('returnToUP'):
 			session.pop('project')
 			return redirect(url_for('userPortal'))
@@ -298,32 +310,38 @@ def checkOut(project):
 			return redirect(url_for('userPortal'))
                                 
 		elif request.form.get("checkinHW1"):
-			requestedOne=int(resourcesInfo["requestedHW1"])
-			project_hw1=projectInfo["HW Set 1 Resources"]
-			if(requestedOne > 0 and requestedOne<=project_hw1):
-				old={"ID":"HWSet_1"}
-				updated={"$set": {"Availability" : availOne+requestedOne}}
-				availOne=availOne+requestedOne
-				hwDb.update_one(old,updated)
-				pName={"Project Name": project}
-				updatedResource={"$set": {"HW Set 1 Resources" : project_hw1-requestedOne}}
-				projectDb.update_one(pName, updatedResource)
+			if resourcesInfo["requestedHW1"]:
+				requestedOne=int(resourcesInfo["requestedHW1"])
+				project_hw1=projectInfo["HW Set 1 Resources"]
+				if(requestedOne > 0 and requestedOne<=project_hw1):
+					old={"ID":"HWSet_1"}
+					updated={"$set": {"Availability" : availOne+requestedOne}}
+					availOne=availOne+requestedOne
+					hwDb.update_one(old,updated)
+					pName={"Project Name": project}
+					updatedResource={"$set": {"HW Set 1 Resources" : project_hw1-requestedOne}}
+					projectDb.update_one(pName, updatedResource)
+				else:
+					msgOne="Please enter valid number of resources"
 			else:
-				msgOne="Please enter valid number of resources"
+				msgOne="Please enter a nonempty value"
 		elif request.form.get("checkinHW2"):
-			requestedTwo=int(resourcesInfo["requestedHW2"])
-			project_hw2=projectInfo["HW Set 2 Resources"]
-			if(requestedTwo > 0 and requestedTwo<=project_hw2):
-				old={"ID":"HWSet_2"}
-				updated={"$set": {"Availability" : availTwo+requestedTwo}}
-				availTwo=availTwo+requestedTwo
-				hwDb.update_one(old,updated)
-				pName={"Project Name": project}
-				updatedResource={"$set": {"HW Set 2 Resources" : project_hw2-requestedTwo}}
-				projectDb.update_one(pName, updatedResource)
+			if resourcesInfo["requestedHW2"]:
+				requestedTwo=int(resourcesInfo["requestedHW2"])
+				project_hw2=projectInfo["HW Set 2 Resources"]
+				if(requestedTwo > 0 and requestedTwo<=project_hw2):
+					old={"ID":"HWSet_2"}
+					updated={"$set": {"Availability" : availTwo+requestedTwo}}
+					availTwo=availTwo+requestedTwo
+					hwDb.update_one(old,updated)
+					pName={"Project Name": project}
+					updatedResource={"$set": {"HW Set 2 Resources" : project_hw2-requestedTwo}}
+					projectDb.update_one(pName, updatedResource)
+				else:
+					msgTwo="Please enter valid number of resources"
 			else:
-				msgTwo="Please enter valid number of resources"
-	return render_template('checkoutPage.html', displayProject=modifyingProject,available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo)
+				msgTwo="Please enter a nonempty value"
+	return render_template('checkoutPage.html', displayProject=modifyingProject,available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo, listHWs=hwSetList)
 
 
 #This is for the main datasets page
