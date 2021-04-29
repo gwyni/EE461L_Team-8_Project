@@ -354,6 +354,7 @@ def home():
 		return render_template("datasetpage.html")
 
 #This page is for adding new datasets
+#Asks for information: username, dataname, and description
 @app.route('/datasets/index')
 def index():
 	return '''
@@ -366,6 +367,7 @@ def index():
 	'''
 
 #This is used by '/index' to create new datasets
+#This uses a framework called gridfs to store each file in 2 collections to overcome the file size limit in mongo
 @app.route('/datasets/create', methods=['POST'])
 def create():
 	if 'data' in request.files:
@@ -384,6 +386,7 @@ def file(filename):
 
 
 #This page finds and downloads the correct datasets
+#Parses using the file name to acquire and download the zip
 @app.route('/datasets/fnd/<he>', methods = ["POST", "GET"])
 def fnd(he):
 	#index()
