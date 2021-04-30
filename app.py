@@ -4,7 +4,6 @@ import numbers
 app = Flask(__name__)
 
 error_messages= {1:'Input is not a number', 2:'Request must be greater than 0', 3: 'Request is greater than availability', 4: 'Successfully checked out resources'}
-
 # this is the url and variables for the user databse, wehen accessing the database use the "userDb" variable
 #app.config["MONGO_URI"] = 'mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/myDb?retryWrites=true&w=majority'
 mongo = PyMongo(app,uri='mongodb+srv://mainUser:TahoeMontecito!@461l-team8.lchei.mongodb.net/myDb?retryWrites=true&w=majority')
@@ -242,106 +241,91 @@ def changePassword():
 			return redirect(url_for('userPortal'))
 	return render_template('changePass.html',content=msg)
 
+
 @app.route('/checkOut/<project> ', methods=['GET','POST'])
 def checkOut(project):
+	error_messages= {1:'Input is not a number', 2:'Request must be greater than 0', 3: 'Request is greater than availability', 4: 'Successfully checked out resources'}
 	hwSetList=set()
-	print(hwDb)
-	x=hwDb.find({},{'_id' : 0,'Capacity':0, 'Availability':0})
-	for data in x:
-		if data["ID"] not in hwSetList:
-			hwSetList.add(data["ID"])
-	hwSetList = list(hwSetList)
-	msgOne= ""
-	msgTwo=""
-	user = ""
-	projectLeaveMsg = ""
-	modifyingProject= "Modifying project: " + project
 	projectInfo=projectDb.find_one({"Project Name": project})
-	hwSetOne=hwDb.find_one({"ID":"HWSet_1"})
-	capOne=hwSetOne["Capacity"]
-	availOne=hwSetOne["Availability"]
-	hwSetTwo=hwDb.find_one({"ID":"HWSet_2"})
-	capTwo=hwSetTwo["Capacity"]
-	availTwo=hwSetTwo["Availability"]
+	allHWSets=hwDb.find({},{'_id' : 0,'Capacity':0, 'Availability':0})    #get names of all hardware sets in database
+	for data in allHWSets:
+		if data["ID"] not in hwSetList:
+			hwID=data["ID"]
+			hwSetList.add(hwID)	 # add hardware set ID's to a list, which is passed to HTML page select dropdown
+			temp=hwID.index("_")
+			hwSetNumber=hwID[temp+1:]
+			if not "HW Set "+hwSetNumber+" Resources" in projectInfo: 		# adds new hwset field to projects if new hwSet was added
+				projectDb.update_many({},{"$set": {"HW Set "+hwSetNumber+" Resources": 0} })
+	hwSetList = list(hwSetList)
+	if("hwSet" not in session):
+		session["hwSet"]="HWSet_1"		#set default session["hwSet"] to HWSet_1 if there already isnt one defined
+	hwSetID=session["hwSet"]
+	msgOne= ""  		#holds status message which is passed to HTML page
+	user = ""
+	projectLeaveMsg = ""     
+	modifyingProject= "Modifying project: " + project
+	currentHWSet=hwDb.find_one({"ID":hwSetID})
+	capacity=currentHWSet["Capacity"]
+	available=currentHWSet["Availability"]
 	user = session['username']   
 	session['project'] = project                      
 	if(request.method=='POST'):
-		resourcesInfo = request.form
-		if request.form.get("submitHW1"):
-			if not resourcesInfo["requestedHW1"]:
-				msgOne="Please enter a nonempty value"
+		resourcesInfo = request.form	
+		if request.form.get("updateInfo"):	# updates the hardware set info according to what is selected in dropdown after update is pressed
+			hwSetID=str(request.form.get("listHWs")) 
+			currentHWSet=hwDb.find_one({"ID":hwSetID})
+			capacity=currentHWSet["Capacity"]    #get currentHWSet capacity
+			available=currentHWSet["Availability"]    #get currentHWSet availability
+			session["hwSet"]=hwSetID  			#set session to the current hwSetID 
+		elif request.form.get("checkoutHW"):
+			if not resourcesInfo["requestedHW"]:
+				msgOne="Please enter a nonempty value" 
 			else:
-				requestedOne=int(resourcesInfo["requestedHW1"])
-				result=validCheckoutInput(requestedOne, availOne)
-				msgOne=error_messages[result]	
+				requested=int(resourcesInfo["requestedHW"])
+				result=validCheckoutInput(requested, available)  #check requested input validity
+				msgOne=error_messages[result]			# set msgOne to appropriate error message
 				if result==4:
-					old={"ID":"HWSet_1"}
-					updated={"$set": {"Availability" : availOne-requestedOne}}
-					availOne=availOne-requestedOne
-					hwDb.update_one(old,updated)
-					project_hw1=projectInfo["HW Set 1 Resources"]
+					temp=hwSetID.index("_")
+					hwSetNum=hwSetID[temp+1:]
+					old={"ID":hwSetID}
+					updated={"$set": {"Availability" : available-requested}} # subtract from availability and update
+					available=available-requested
+					hwDb.update_one(old,updated)						
+					project_hw=projectInfo["HW Set "+hwSetNum+" Resources"]
 					pName={"Project Name": project}
-					updatedResource={"$set": {"HW Set 1 Resources" : project_hw1 +requestedOne}}
-					projectDb.update_one(pName, updatedResource)
-		elif request.form.get("submitHW2"):
-			if not resourcesInfo["requestedHW2"]:
-				msgTwo="Please enter a nonempty value"
-			else:
-				requestedTwo=int(resourcesInfo["requestedHW2"])
-				result=validCheckoutInput(requestedTwo,availTwo)
-				msgTwo=error_messages[result]
-				if result==4:
-					old={"ID":"HWSet_2"}
-					updated={"$set": {"Availability" : availTwo-requestedTwo}}
-					availTwo=availTwo-requestedTwo
-					hwDb.update_one(old,updated)
-					project_hw2=projectInfo["HW Set 2 Resources"]
-					pName={"Project Name": project}
-					updatedResource={"$set": {"HW Set 2 Resources" : project_hw2 +requestedTwo}}
-					projectDb.update_one(pName, updatedResource)
+					updatedResource={"$set": {"HW Set "+hwSetNum+" Resources" : project_hw +requested}} 
+					projectDb.update_one(pName, updatedResource)	#update resources usage for project
 		elif request.form.get('returnToUP'):
 			session.pop('project')
+			session.pop('hwSet')      #release session variables
 			return redirect(url_for('userPortal'))
 		elif request.form.get('leaveproject'):
 			projectUsers=projectInfo["Users in Project"]
 			projectUsers.remove(user)
 			projectDb.update({"Project Name": projectInfo["Project Name"]},{'$set':{"Users in Project":projectUsers}})
 			session.pop('project')
+			session.pop('hwSet')		#release session variables
 			return redirect(url_for('userPortal'))
-                                
-		elif request.form.get("checkinHW1"):
-			if resourcesInfo["requestedHW1"]:
-				requestedOne=int(resourcesInfo["requestedHW1"])
-				project_hw1=projectInfo["HW Set 1 Resources"]
-				if(requestedOne > 0 and requestedOne<=project_hw1):
-					old={"ID":"HWSet_1"}
-					updated={"$set": {"Availability" : availOne+requestedOne}}
-					availOne=availOne+requestedOne
-					hwDb.update_one(old,updated)
+                        
+		elif request.form.get("checkinHW"):
+			temp=hwSetID.index("_")
+			hwSetNum=hwSetID[temp+1:]
+			if resourcesInfo["requestedHW"]:
+				requested=int(resourcesInfo["requestedHW"])
+				project_hw=projectInfo["HW Set "+hwSetNum+" Resources"]
+				if(requested > 0 and requested<=project_hw):
+					old={"ID": hwSetID}
+					updated={"$set": {"Availability" : available+requested}}  #add checked in resources
+					available=available+requested
+					hwDb.update_one(old,updated)  #update the hwDb with new availability
 					pName={"Project Name": project}
-					updatedResource={"$set": {"HW Set 1 Resources" : project_hw1-requestedOne}}
-					projectDb.update_one(pName, updatedResource)
+					updatedResource={"$set": {"HW Set "+hwSetNum+" Resources" : project_hw-requested}} 
+					projectDb.update_one(pName, updatedResource)  # remove checked in resources from project resource info
 				else:
 					msgOne="Please enter valid number of resources"
 			else:
 				msgOne="Please enter a nonempty value"
-		elif request.form.get("checkinHW2"):
-			if resourcesInfo["requestedHW2"]:
-				requestedTwo=int(resourcesInfo["requestedHW2"])
-				project_hw2=projectInfo["HW Set 2 Resources"]
-				if(requestedTwo > 0 and requestedTwo<=project_hw2):
-					old={"ID":"HWSet_2"}
-					updated={"$set": {"Availability" : availTwo+requestedTwo}}
-					availTwo=availTwo+requestedTwo
-					hwDb.update_one(old,updated)
-					pName={"Project Name": project}
-					updatedResource={"$set": {"HW Set 2 Resources" : project_hw2-requestedTwo}}
-					projectDb.update_one(pName, updatedResource)
-				else:
-					msgTwo="Please enter valid number of resources"
-			else:
-				msgTwo="Please enter a nonempty value"
-	return render_template('checkoutPage.html', displayProject=modifyingProject,available=availOne, initialCap=capOne, available2=availTwo, initialCap2=capTwo, statusOne=msgOne, statusTwo=msgTwo, listHWs=hwSetList)
+	return render_template('checkoutPage.html', displayProject=modifyingProject,available=available, initialCap=capacity, statusOne=msgOne, listHWs=hwSetList, currentHWSet=hwSetID)
 
 
 #This is for the main datasets page

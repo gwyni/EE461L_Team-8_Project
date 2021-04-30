@@ -12,31 +12,35 @@
 <form method='POST'>
 	<h1>Manage Resources</h1>
 	<p style="border: 1px solid black; background-color: lightgreen; color: black;"><b>{{displayProject}}	</b></p>
+	
+	<select name=listHWs method="GET" action ="/">
+		{% for item in listHWs %}
+		<option value = "{{item}}" SELECTED>{{item}}</option>
+		{% endfor %}
+	</select>
+	<br>
+	
+	<button type="submit" name="updateInfo" value="send request">Update HWSet Information</button>
+	
 	<div class="row">
 		<div class="big-column">
-			<h2>Hardware Set 1:</h2>
-			<select name=listHWs method="GET" action ="/">
-				{% for item in listHWs %}
-				<option value = "{{item}}" SELECTED>{{item}}</option>
-				{% endfor %}
-
-			</select>
+			<h2>{{currentHWSet}}</h2>
 		</div>
 		<div class="small-column" style="margin-top: 5px;">
 			<p style="color: black;">Availability: {{available}} <br>Capacity: {{initialCap}}</p>
 		</div>
 	</div>
-
+	
 	<div class="row">
 		<div class="small-column" style="width: 50%">
-			<label for="requestedHW1">Request Resources (Enter 1-100):</label><br>
+			<label for="requestedHW">Request Resources (Enter 1-100):</label><br>
 		</div>
 		<div class="big-column" style="width: 50%">
-			<input type="number" id="requestedHW1" name="requestedHW1">
+			<input type="number" id="requestedHW" name="requestedHW">
 		</div>
 	<div class="row">
-		<button type="submit" name="submitHW1" value="send request">Check Out</button>
-		<button type="submit" name="checkinHW1" value="send request">Check In</button>
+		<button type="submit" name="checkoutHW" value="send request">Check Out</button>
+		<button type="submit" name="checkinHW" value="send request">Check In</button>
 	</div>
 	<div class="row">
 		<p>{{statusOne}}</p>		
@@ -44,30 +48,7 @@
 </form>
 
 <!--hardware set 2 block and information-->
-<form method='POST'>
-	<div class="row">
-		<div class="big-column">
-			<h2>Hardware Set 2:</h2>
-		</div>
-		<div class="small-column" style="margin-top: 5px;">
-			<p style="color: black;">Availability: {{available2}} <br>Capacity: {{initialCap2}}</p>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="small-column" style="width: 50%">
-			<label for="requestedHW2">Request Resources (Enter 1-100):</label><br>
-		</div>
-		<div class="big-column" style="width: 50%">
-			<input type="number" id="requestedHW2" name="requestedHW2">
-		</div>
-	<div class="row">
-		<button type="submit" name="submitHW2" value="send request">Check Out</button>
-		<button type="submit" name="checkinHW2" value="send request">Check In</button>
-	</div>
-	<div class="row">
-		<p>{{statusTwo}}</p><br>
-	</div>
+<form method='POST'>	
 	<div class="row">		
 			<button type='submit' style="color: #5f5019; background-color:#ffd744;	border: #d1a401 1px solid;" name='returnToUP' value="go back">Return to User Portal</button>
 			<button type='submit' style="color: #5f5019; background-color:#ffd643;	border: #d1a401 1px solid;" name='leaveproject' value="leave project">Leave Project</button>
